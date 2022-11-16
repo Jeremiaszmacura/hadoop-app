@@ -4,11 +4,15 @@
 docker build -t hadoop-app -f hadoop.Dockerfile .
 ```
 
+<hr />
+
 ## Creating & Running Docker Container
 
 ```sh
 docker run -p 8088:8088 --name hadoop-app -d hadoop-app
 ```
+
+<hr />
 
 ## Accessing Hadoop in Docker Container
 
@@ -20,11 +24,24 @@ docker exec -it hadoop-app bash
 hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.4.jar pi 10 100
 ```
 
+<hr />
+
 ## Web interface of the Resource Manager
 
 ```text
 http://localhost:8088
 ```
+
+<hr />
+
+## Get public IP adress for flask app using ngrok
+
+```text
+http://localhost:4040
+```
+
+<hr />
+<br />
 
 # Development setup
 
@@ -78,14 +95,6 @@ Build package (run command each time after changes anmd before building image fr
 
 ```sh
 python setup.py bdist_wheel
-```
-
-<hr />
-
-### Run PosgreSQL database as container
-
-```sh
-docker run --name postgres_workshops -e POSTGRES_DB=dev_database -e POSTGRES_USER=dev_user -e POSTGRES_PASSWORD=dev_user -p 5432:5432 -d postgres:14
 ```
 
 <hr />
