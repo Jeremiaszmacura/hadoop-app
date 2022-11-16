@@ -37,22 +37,22 @@ def scrape_words(soup: BeautifulSoup) -> str:
         for each_word in words:
             if re.match("^[a-zA-Z]*$", each_word):
                 wordlist.append(each_word)
-    
+
     return wordlist
 
 
 def scrape_data(url: str, wiki: bool) -> AddressData:
     """Runs scraping on given url and nested urls."""
     source_code = requests.get(url).text
-    soup = BeautifulSoup(source_code, 'html.parser')
+    soup = BeautifulSoup(source_code, "html.parser")
     wordlist = scrape_words(soup)
     address_data = AddressData(url, words=wordlist)
     if wiki:
-        for link in soup.findAll('a', attrs={'href': re.compile("^/en(.*)/wiki/")}):
-            address_data.nested_addresses.append(link.get('href'))
+        for link in soup.findAll("a", attrs={"href": re.compile("^/en(.*)/wiki/")}):
+            address_data.nested_addresses.append(link.get("href"))
     else:
-        for link in soup.findAll('a', attrs={'href': re.compile("^(http|https)://")}):
-            address_data.nested_addresses.append(link.get('href'))
+        for link in soup.findAll("a", attrs={"href": re.compile("^(http|https)://")}):
+            address_data.nested_addresses.append(link.get("href"))
 
     return address_data
 
@@ -61,9 +61,9 @@ def scrape_data(url: str, wiki: bool) -> AddressData:
 def home() -> str:
     """Endpoint test route."""
     return render_template(
-        'home.html',
+        "home.html",
         title="Scraping Words Tool",
-        description="Pass URL and numer of addresses to scrape - nesting from the passed url address"
+        description="Pass URL and numer of addresses to scrape - nesting from the passed url address",
     )
 
 
@@ -73,17 +73,17 @@ def test_db() -> str:
     colection = db[f"{AddressData.colection_name}"]
     address_data = AddressData("fasfas", ["fasdf", "fasdf"], ["fasdf", "fasdf"])
     result = colection.insert_one(address_data.__dict__)
-    colection.delete_one({'_id': result.inserted_id})
+    colection.delete_one({"_id": result.inserted_id})
     return f"<p>Inserted id: {result.inserted_id}</p>"
 
 
-@address_data_blueprint.route("/scrape-url", methods = ['GET', 'POST'])
+@address_data_blueprint.route("/scrape-url", methods=["GET", "POST"])
 def scrape_url() -> str:
     """Endpoint for scraping words from given url and nested urls."""
-    if request.method == 'POST':
-        urls = [request.form['urlAddress']]
-        nesting_lvl = int(request.form['nestedNumber'])
-        wiki = True if request.form.get('wiki') else False
+    if request.method == "POST":
+        urls = [request.form["urlAddress"]]
+        nesting_lvl = int(request.form["nestedNumber"])
+        wiki = True if request.form.get("wiki") else False
         nest_iter = 0
         data = []
 
@@ -98,10 +98,12 @@ def scrape_url() -> str:
             except urllib.error.HTTPError as ex:
                 print(f"An error ocured: {ex}")
             nest_iter = nest_iter + 1
-        
+
         colection = db[f"{AddressData.colection_name}"]
         data_dict = object_list_to_dict(data)
         screaped_urls = get_scraped_urls(data)
         colection.insert_many(data_dict)
 
-        return str(f"Scraped urls: {screaped_urls}\nNumber of objects saved in database: {len(data)}")
+        return str(
+            f"Scraped urls: {screaped_urls}\nNumber of objects saved in database: {len(data)}"
+        )

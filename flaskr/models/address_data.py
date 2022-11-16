@@ -1,6 +1,7 @@
 """AddressData database model."""
 
-class AddressData():
+
+class AddressData:
     """Class of AddressData database model"""
 
     colection_name = "address_data"

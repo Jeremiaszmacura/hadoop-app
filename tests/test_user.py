@@ -1,5 +1,6 @@
 """File containing tests for User database model."""
 
+
 def test_request_example(client):
     """Test."""
     response = client.get("/")
