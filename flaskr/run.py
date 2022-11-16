@@ -5,4 +5,7 @@ from flaskr.app import create_app
 
 
 app = create_app(environ.get("APP_CONFIG", "DevelopmentConfig"))
-app.run()
+
+
+if __name__ == '__main__':
+    app.run()

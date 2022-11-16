@@ -29,6 +29,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     MONGO_URI = environ.get("DEV_DATABASE_URI", "localhost:27017")
+    TEMPLATES_AUTO_RELOAD = True
 
 
 class TestingConfig(Config):
