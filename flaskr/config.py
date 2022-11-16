@@ -17,17 +17,23 @@ class Config(object):
 class ProductionConfig(Config):
     """Uses production PostgreSQL database container."""
 
-    SQLALCHEMY_DATABASE_URI = environ.get("PROD_DATABASE_URI")
+    ENV = "production"
+    SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI", "localhost:27017")
 
 
 class DevelopmentConfig(Config):
     """Uses PostgreSQL in docker container."""
 
-    SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI")
+    # SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI")
+    ENV = "development"
+    DEBUG = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    MONGO_URI = environ.get("DEV_DATABASE_URI", "localhost:27017")
 
 
 class TestingConfig(Config):
     """Uses sqlite in memory."""
 
-    SQLALCHEMY_DATABASE_URI = environ.get("TEST_DATABASE_URI")
+    ENV = "development"
+    SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI", "localhost:27017")
     TESTING = True
