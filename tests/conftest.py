@@ -1,5 +1,6 @@
 """Config tests."""
 import pytest
+
 from flaskr.app import create_app
 
 
