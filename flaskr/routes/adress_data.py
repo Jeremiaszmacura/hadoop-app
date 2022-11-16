@@ -8,6 +8,10 @@ from flaskr.models.adress_data import AdressData
 adress_data_blueprint = Blueprint("adress_data_blueprint", __name__)
 
 
+def scrape_data():
+    pass
+
+
 @adress_data_blueprint.route("/")
 def hello_world() -> str:
     """Test route."""

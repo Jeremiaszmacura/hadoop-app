@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
 
-  flask-app:
-    image: flask-app
-    container_name: flask-app
+  flask-hadoop-app:
+    image: flask-hadoop-app
+    container_name: flask-hadoop-app
     build:
       context: .
       dockerfile: ./app.Dockerfile
@@ -12,27 +12,40 @@ services:
       - 5000:5000
     environment:
       FLASK_DEBUG: 'True'
-      DATABASE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}
+      DATABASE_URI: ${DEV_DATABASE_URI}
     networks:
-      - flask-app-network
+      - flask-hadoop-app-network
     restart: on-failure
-    depends_on:
-      - database
     deploy:
       replicas: 1
 
-  database:
-    image: postgres:14
+  hadoop-app:
+    image: hadoop-app
+    container_name: hadoop-app
+    build:
+      context: .
+      dockerfile: ./hadoop.Dockerfile
+    ports:
+      - 8088:8088
+    networks:
+      - flask-hadoop-app-network
+    restart: on-failure
+    deploy:
+      replicas: 1
+
+  ngrok:
+    container_name: ngrok
+    image: ngrok/ngrok
+    ports:
+      - "4040:4040"
+    networks:
+      - flask-hadoop-app-network
     env_file: .env
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    networks:
-      - flask-app-network
-    restart: always
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command: ["http", "flask-hadoop-app:5000"]
 
 networks:
-    flask-app-network:
+    flask-hadoop-app-network:
       driver: bridge
-      name: flask-app-network
+      name: flask-hadoop-app-network
