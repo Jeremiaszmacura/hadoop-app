@@ -12,6 +12,50 @@ from flaskr.models.address_data import AddressData
 address_data_blueprint = Blueprint("address_data_blueprint", __name__)
 
 
+def words_length_median(words_list: list) -> str:
+    sorted_words = sorted(words_list, key=len)
+    list_length = len(sorted_words)
+    index = (list_length - 1) // 2
+    if list_length % 2:
+        return sorted_words[index]
+    else:
+        return (sorted_words[index] + sorted_words[index + 1]) / 2.0
+
+
+def count_words_length_mean(words_list: list):
+    words_length_mean = sum(map(len, words_list)) / len(words_list)
+    return words_length_mean
+
+
+def concatenate_words_lists(data: list) -> list:
+    words_list = []
+    for object in data:
+        words_list.extend(object.words)
+    return words_list
+
+
+def count_words_occurrences(words_list: list) -> dict:
+    """Count occurrences of each word in scraped data."""
+    words_occurrences = dict()
+
+    for word in words_list:
+        if word in words_occurrences:
+            words_occurrences[word] = words_occurrences[word] + 1
+        else:
+            words_occurrences[word] = 1
+
+    return words_occurrences
+
+
+def calculate_statistics(data: dict) -> dict:
+    statistics = dict()
+    words_list = concatenate_words_lists(data)
+    words_length_mean = count_words_length_mean(words_list)
+    words_median = words_length_median(words_list)
+    words_occurrences = count_words_occurrences(words_list)
+    return statistics
+
+
 def object_list_to_dict(objects_list: list) -> list:
     """Convert list of objects into list dictionaries."""
     data_dict = []
@@ -103,7 +147,8 @@ def scrape_url() -> str:
         data_dict = object_list_to_dict(data)
         screaped_urls = get_scraped_urls(data)
         colection.insert_many(data_dict)
+        statistics = calculate_statistics(data)
 
         return str(
-            f"Scraped urls: {screaped_urls}\nNumber of objects saved in database: {len(data)}"
+            f"Scraped urls:\n{screaped_urls}\nNumber of objects saved in database:\n{len(data)}\nStatistics:\n{statistics}"
         )
