@@ -12,22 +12,34 @@ from flaskr.models.address_data import AddressData
 address_data_blueprint = Blueprint("address_data_blueprint", __name__)
 
 
-def words_length_median(words_list: list) -> str:
+def most_common_words(words_occurrences: dict) -> list:
+    """Takes list of words and return top 10 common words."""
+    return sorted(words_occurrences, key=words_occurrences.get, reverse=True)[:10]
+
+
+def covert_to_words_len_list(words_list: list) -> list:
+    """Takes list of words and return list of len of each word."""
+    return map(len, words_list)
+
+
+def words_length_median(words_list: list):
+    """Calculates the median for word lengths."""
     sorted_words = sorted(words_list, key=len)
     list_length = len(sorted_words)
     index = (list_length - 1) // 2
     if list_length % 2:
-        return sorted_words[index]
+        return len(sorted_words[index])
     else:
-        return (sorted_words[index] + sorted_words[index + 1]) / 2.0
+        return (len(sorted_words[index]) + len(sorted_words[index + 1])) / 2.0
 
 
 def count_words_length_mean(words_list: list):
-    words_length_mean = sum(map(len, words_list)) / len(words_list)
-    return words_length_mean
+    """Calculates the average word length."""
+    return sum(map(len, words_list)) / len(words_list)
 
 
 def concatenate_words_lists(data: list) -> list:
+    """Joins words lists from multpiple AddressData objects into one."""
     words_list = []
     for object in data:
         words_list.extend(object.words)
@@ -47,12 +59,15 @@ def count_words_occurrences(words_list: list) -> dict:
     return words_occurrences
 
 
-def calculate_statistics(data: dict) -> dict:
+def calculate_statistics(data: list) -> dict:
+    """Calculate statistics and return as a dictionary."""
     statistics = dict()
     words_list = concatenate_words_lists(data)
-    words_length_mean = count_words_length_mean(words_list)
-    words_median = words_length_median(words_list)
-    words_occurrences = count_words_occurrences(words_list)
+    words_len_list = covert_to_words_len_list(words_list)
+    statistics["words_length_mean"] = count_words_length_mean(words_list)
+    statistics["words_median"] = words_length_median(words_list)
+    statistics["words_occurrences"] = count_words_occurrences(words_list)
+    statistics["most_common_words"] = most_common_words(statistics["words_occurrences"])
     return statistics
 
 

@@ -1,6 +1,15 @@
-<header>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='navigation.css')}}">
+
+<header class="header">
+    <div class="logo">Words Scraper</div>
     <nav>
-        <a href="https://example.com">Home</a>
-        <a href="https://example.com">Instruction</a>
-   </nav>
+        <ul class="nav_links">
+            <li>
+                <a class="a" href="https://example.com">Scrape</a>
+            </li>
+            <li>
+                <a class="a" href="https://example.com">About</a>
+            </li>
+        </ul>
+    </nav>
 </header>

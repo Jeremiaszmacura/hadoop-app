@@ -1,24 +1,27 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css')}}">
+
 {% extends 'layout.html' %}
 
 {% block content %}
     <div class="container">
         <h1>{{title}}</h1>
         <p>{{description}}</p>
-
-        <form action="http://localhost:5000/scrape-url" method="POST">
-            <div class="form-group">
-                <label for="urlAddress">URL Address</label>
-                <input type="text" class="form-control" id="urlAddressId" name="urlAddress" aria-describedby="urlAddressHelp" placeholder="https://en.wikipedia.org/wiki/Main_Page">
-            </div>
-            <div class="form-group">
-                <label for="nestedNumber">Number of nested urls</label>
-                <input type="number" class="form-control" id="nestedNumberId" name="nestedNumber" min="1" max="100" placeholder="1">
-            </div>
-            <div>
-                <label for="wiki">Wikipedia</label>
-                <input type="checkbox" id="wiki" name="wiki" value="True">
-            </div>
-            <input type="submit" value="submit" />
-        </form>
+        <div class="box">
+            <form action="http://localhost:5000/scrape-url" method="POST">
+                <div class="form-group">
+                    <label for="urlAddress">URL Address</label>
+                    <input type="text" class="form-control" id="urlAddressId" name="urlAddress" aria-describedby="urlAddressHelp" placeholder="https://en.wikipedia.org/wiki/Main_Page">
+                </div>
+                <div class="form-group">
+                    <label for="nestedNumber">Number of nested urls</label>
+                    <input type="number" class="form-control" id="nestedNumberId" name="nestedNumber" min="1" max="100" placeholder="1">
+                </div>
+                <div class="form-group-checkbox">
+                    <label for="wiki">Wikipedia</label>
+                    <input type="checkbox" id="wiki" name="wiki" value="True">
+                </div>
+                <input id="submit-button" type="submit" value="submit" />
+            </form>
+        </div>
     </div>
 {% endblock %}
