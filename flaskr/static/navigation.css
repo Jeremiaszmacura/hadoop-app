@@ -9,6 +9,7 @@
     font-weight: 500;
     font-size: 1em;
     color: #f7f5f5;
+    font-weight: 700;
     text-decoration: none;
   }
   
@@ -23,7 +24,6 @@
   .logo {
     font-size: 1.5em;
     font-weight: 800;
-    cursor: pointer;
     margin-right: auto;
     color: #f7f5f5;
   }

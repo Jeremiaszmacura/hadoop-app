@@ -64,10 +64,11 @@ def calculate_statistics(data: list) -> dict:
     statistics = dict()
     words_list = concatenate_words_lists(data)
     words_len_list = covert_to_words_len_list(words_list)
-    statistics["words_length_mean"] = count_words_length_mean(words_list)
-    statistics["words_median"] = words_length_median(words_list)
-    statistics["words_occurrences"] = count_words_occurrences(words_list)
-    statistics["most_common_words"] = most_common_words(statistics["words_occurrences"])
+    statistics["words length mean"] = count_words_length_mean(words_list)
+    statistics["words median"] = words_length_median(words_list)
+    words_occurrences = count_words_occurrences(words_list)
+    statistics["most common words"] = most_common_words(words_occurrences)
+    statistics["words occurrences"] = words_occurrences
     return statistics
 
 
@@ -136,6 +137,16 @@ def test_db() -> str:
     return f"<p>Inserted id: {result.inserted_id}</p>"
 
 
+@address_data_blueprint.route("/about")
+def about() -> str:
+    """Endpoint for about page."""
+    return render_template(
+        "about.html",
+        title="How to use Scraping Words Tool",
+        description="Pass URL and numer of addresses to scrape - nesting from the passed url address",
+    )
+
+
 @address_data_blueprint.route("/scrape-url", methods=["GET", "POST"])
 def scrape_url() -> str:
     """Endpoint for scraping words from given url and nested urls."""
@@ -163,7 +174,10 @@ def scrape_url() -> str:
         screaped_urls = get_scraped_urls(data)
         colection.insert_many(data_dict)
         statistics = calculate_statistics(data)
+        print(type(statistics))
 
-        return str(
-            f"Scraped urls:\n{screaped_urls}\nNumber of objects saved in database:\n{len(data)}\nStatistics:\n{statistics}"
-        )
+        return render_template(
+        "result.html",
+        title="Scraping result",
+        statistics=statistics,
+    )

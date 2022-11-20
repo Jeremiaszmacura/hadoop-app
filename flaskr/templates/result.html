@@ -1,0 +1,20 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='result.css')}}">
+
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h1>{{title}}</h1>
+
+{% for key, value in statistics.items() %}
+    <div class="container">
+        <div class="key-box">
+            <p class="key">{{key}}</p>
+        </div>
+        <div class="box">
+            <p>{{value}}</p>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

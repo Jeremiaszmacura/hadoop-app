@@ -1,0 +1,16 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about.css')}}">
+
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="key-box">
+        <h1 class="key">{{title}}</h1>
+    </div>
+    <div class="box">
+        <p>{{description}}</p>
+    </div>
+</div>
+
+{% endblock %}
