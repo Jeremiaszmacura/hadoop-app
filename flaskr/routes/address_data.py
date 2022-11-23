@@ -20,10 +20,19 @@ address_data_blueprint = Blueprint("address_data_blueprint", __name__)
 def create_words_len_hist(words_list: list) -> str:
     """Plot histogram of words length occurrences and save to OS."""
     words_len_list = list(map(len, words_list))
+    binwidth = 1
     path = "flaskr/static/images/histogram.png"
     if os.path.isfile(path):
         os.remove(path)
-    plt.hist(words_len_list)
+    plt.hist(
+        words_len_list,
+        bins=range(min(words_len_list), max(words_len_list) + binwidth, binwidth),
+        facecolor="#2ab0ff",
+        edgecolor="#169acf",
+        linewidth=1,
+    )
+    plt.xlabel("Word length")
+    plt.ylabel("Occurrences")
     plt.savefig(path)
     return path
 
@@ -51,7 +60,7 @@ def words_length_median(words_list: list):
 
 def count_words_length_mean(words_list: list):
     """Calculates the average word length."""
-    return sum(map(len, words_list)) / len(words_list)
+    return round(sum(map(len, words_list)) / len(words_list), 4)
 
 
 def concatenate_words_lists(data: list) -> list:
@@ -157,7 +166,7 @@ def test_db() -> str:
 @address_data_blueprint.route("/about")
 def about() -> str:
     """Endpoint for about page."""
-    with open('flaskr/static/about.txt', 'r') as file:
+    with open("flaskr/static/about.txt", "r") as file:
         description = file.read()
     return render_template(
         "about.html",
