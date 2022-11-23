@@ -1,0 +1,3 @@
+Pass URL and numer of addresses to scrape - nesting from the passed url address
+Pass number of nested links to scrape from
+Select Wikipedia checkbox if you want to search only Wikipedia's pages

@@ -157,10 +157,12 @@ def test_db() -> str:
 @address_data_blueprint.route("/about")
 def about() -> str:
     """Endpoint for about page."""
+    with open('flaskr/static/about.txt', 'r') as file:
+        description = file.read()
     return render_template(
         "about.html",
         title="How to use Scraping Words Tool",
-        description="Pass URL and numer of addresses to scrape - nesting from the passed url address",
+        description=description,
     )
 
 
