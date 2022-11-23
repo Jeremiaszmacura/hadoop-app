@@ -46,3 +46,10 @@ h1 {
     background: #036600;
     border-radius: 0.5em 0.5em 0 0;
 }
+
+.image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}

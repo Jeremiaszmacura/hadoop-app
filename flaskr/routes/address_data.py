@@ -1,15 +1,31 @@
 """Routes related to AddressData database colection."""
 import requests
 from flask import Blueprint, request, render_template
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import urllib.request, urllib.error
 from bs4 import BeautifulSoup
 import re
+import os
 
 from flaskr.models.db import db
 from flaskr.models.address_data import AddressData
 
 
 address_data_blueprint = Blueprint("address_data_blueprint", __name__)
+
+
+def create_words_len_hist(words_list: list) -> str:
+    """Plot histogram of words length occurrences and save to OS."""
+    words_len_list = list(map(len, words_list))
+    path = "flaskr/static/images/histogram.png"
+    if os.path.isfile(path):
+        os.remove(path)
+    plt.hist(words_len_list)
+    plt.savefig(path)
+    return path
 
 
 def most_common_words(words_occurrences: dict) -> list:
@@ -19,7 +35,7 @@ def most_common_words(words_occurrences: dict) -> list:
 
 def covert_to_words_len_list(words_list: list) -> list:
     """Takes list of words and return list of len of each word."""
-    return map(len, words_list)
+    return list(map(len, words_list))
 
 
 def words_length_median(words_list: list):
@@ -68,6 +84,7 @@ def calculate_statistics(data: list) -> dict:
     statistics["words median"] = words_length_median(words_list)
     words_occurrences = count_words_occurrences(words_list)
     statistics["most common words"] = most_common_words(words_occurrences)
+    statistics["histogram"] = create_words_len_hist(words_list)
     statistics["words occurrences"] = words_occurrences
     return statistics
 
@@ -174,10 +191,9 @@ def scrape_url() -> str:
         screaped_urls = get_scraped_urls(data)
         colection.insert_many(data_dict)
         statistics = calculate_statistics(data)
-        print(type(statistics))
 
         return render_template(
-        "result.html",
-        title="Scraping result",
-        statistics=statistics,
-    )
+            "result.html",
+            title="Scraping result",
+            statistics=statistics,
+        )

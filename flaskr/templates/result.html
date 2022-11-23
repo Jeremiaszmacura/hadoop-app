@@ -11,9 +11,15 @@
         <div class="key-box">
             <p class="key">{{key}}</p>
         </div>
-        <div class="box">
-            <p>{{value}}</p>
-        </div>
+        {% if 'static/images/' in value|string %}
+            <div class="box">
+                <img class="image" src="{{ url_for('static', filename = 'images/histogram.png') }}" alt="previous" title="Previous">
+            </div>
+        {% else %}
+            <div class="box">
+                <p>{{value}}</p>
+            </div>
+        {% endif %}
     </div>
 {% endfor %}
 

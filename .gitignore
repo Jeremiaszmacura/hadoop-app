@@ -16,3 +16,5 @@ build/
 .eggs/
 
 .idea/
+
+flaskr/static/images
