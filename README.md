@@ -71,18 +71,21 @@ Linux/MacOS
 
 ```sh
 export FLASK_APP=flaskr/run.py
+export FLASK_DEBUG="True"
 ```
 
 Windows cmd
 
 ```sh
 set FLASK_APP=flaskr/run.py
+set FLASK_DEBUG="True"
 ```
 
 Windows powershell
 
 ```sh
 $env:FLASK_APP = "flaskr/run.py"
+$env:FLASK_DEBUG="True"
 ```
 
 Install app as library in development mode using setuptool
@@ -133,4 +136,26 @@ Black fix
 
 ```sh
 python -m black .
+```
+
+<hr />
+
+### URLs
+
+App
+
+```text
+http://localhost:5000/
+```
+
+Hadoop
+
+```text
+http://localhost:8088/
+```
+
+Ngrok
+
+```text
+http://localhost:4040/
 ```

@@ -57,8 +57,6 @@ services:
     networks:
       - flask-hadoop-app-network
     restart: on-failure
-    depends_on:
-      - hadoop-app-mongodb
     deploy:
       replicas: 1
 
