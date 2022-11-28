@@ -22,6 +22,8 @@ def create_words_len_hist(words_list: list) -> str:
     words_len_list = list(map(len, words_list))
     binwidth = 1
     path = "flaskr/static/images/histogram.png"
+    if not os.path.exists("path/to/demo_folder"):
+        os.makedirs("flaskr/static/images", exist_ok=True)
     if os.path.isfile(path):
         os.remove(path)
     plt.hist(
