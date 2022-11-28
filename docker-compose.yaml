@@ -2,45 +2,31 @@ version: '3.8'
 
 services:
 
-  # hadoop-app-mongodb:
-  #   image: mongo
-  #   container_name: hadoop-app-mongodb
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ADMIN_USERNAME}
-  #     - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ADMIN_PASSWORD}
-  #     - MONGO_INITDB_DATABASE=${DATABASE_NAME}
-  #   env_file: 
-  #   - .env
-  #   ports:
-  #     - '27017-27019:27017-27019'
-  #   volumes: 
-  #     - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-  #     - ./mongo-data:/data/db
-  #   networks:
-  #     - flask-hadoop-app-network
-  #   restart: always
+  mongodb:
+    image: mongo
+    restart: always
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: user
+    volumes:
+      - ./mongo-data:/data/db
+    networks:
+      - flask-hadoop-app-network
 
-  # hadoop-app-mongo-express:
-  #   image: mongo-express
-  #   container_name: hadoop-app-mongo-express
-  #   ports:
-  #     - 8080:8081
-  #   environment:
-  #     - ME_CONFIG_MONGODB_SERVER=${DATABASE_DOCKER_HOST}
-  #     - ME_CONFIG_MONGODB_PORT=${DATABASE_PORT}
-  #     - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-  #     - ME_CONFIG_MONGODB_AUTH_DATABASE=${DATABASE_NAME}
-  #     - ME_CONFIG_MONGODB_AUTH_USERNAME=${DATABASE_USERNAME}
-  #     - ME_CONFIG_MONGODB_AUTH_PASSWORD=${DATABASE_PASSWORD}
-  #     - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
-  #     - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
-  #   env_file: 
-  #     - .env
-  #   networks:
-  #     - flask-hadoop-app-network
-  #   depends_on:
-  #     - hadoop-app-mongodb
-  #   restart: always
+  mongo-express:
+    image: mongo-express:latest
+    container_name: hadoop-app-mongo-express
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    env_file: .env
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+      ME_CONFIG_MONGODB_URL: "mongodb://user:user@mongodb"
+    networks:
+      - flask-hadoop-app-network
 
   flask-hadoop-app:
     image: flask-hadoop-app
@@ -57,8 +43,6 @@ services:
     networks:
       - flask-hadoop-app-network
     restart: on-failure
-    deploy:
-      replicas: 1
 
   hadoop-app:
     image: hadoop-app
@@ -71,8 +55,6 @@ services:
     networks:
       - flask-hadoop-app-network
     restart: on-failure
-    deploy:
-      replicas: 1
 
   ngrok:
     container_name: ngrok
