@@ -3,7 +3,6 @@ FROM python:3.10
 WORKDIR /app
 
 ENV FLASK_APP=flaskr/run.py
-
 ENV FLASK_RUN_HOST=0.0.0.0
 
 COPY ./dist/flaskr-0.1.0-py3-none-any.whl .

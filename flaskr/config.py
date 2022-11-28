@@ -36,4 +36,5 @@ class TestingConfig(Config):
 
     ENV = "development"
     MONGO_URI = environ.get("DEV_DATABASE_URI", "localhost:27017")
+    CRYPTO_KEY = environ.get("CRYPTO_KEY")
     TESTING = True

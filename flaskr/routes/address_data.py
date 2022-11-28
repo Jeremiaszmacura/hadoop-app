@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import re
 import os
 
-from flaskr.models.db import db, fernet
+from flaskr.models.db import db, db_backup
 from flaskr.models.address_data import AddressData
 
 
@@ -105,7 +105,6 @@ def dict_to_object_list(data_dict: list) -> list:
     data = []
 
     for dict_item in data_dict:
-        print(dict_item)
         address_data = AddressData(
             address=dict_item["address"],
             nested_addresses=dict_item["nested_addresses"],
@@ -217,6 +216,7 @@ def scrape_url() -> str:
             nest_iter = nest_iter + 1
 
         collection = db[f"{AddressData.colection_name}"]
+        collection_backup = db_backup[f"{AddressData.colection_name}"]
 
         screaped_urls = get_scraped_urls(data)
         statistics = calculate_statistics(data)
@@ -225,6 +225,7 @@ def scrape_url() -> str:
             object.encrypt()
         data_dict = object_list_to_dict(data)
         collection.insert_many(data_dict)
+        collection_backup.insert_many(data_dict)
 
         return render_template(
             "result.html",

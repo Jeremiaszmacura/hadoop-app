@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  hadoop-app-mongodb:
+    image: mongo
+    container_name: hadoop-app-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ADMIN_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ADMIN_PASSWORD}
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+    env_file: 
+    - .env
+    ports:
+      - '27018:27017'
+    volumes: 
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-data:/data/db
+    networks:
+      - flask-hadoop-app-network
+    restart: always
+
+networks:
+    flask-hadoop-app-network:
+      driver: bridge
+      name: flask-hadoop-app-network
