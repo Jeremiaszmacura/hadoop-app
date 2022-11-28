@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import re
 import os
 
-from flaskr.models.db import db
+from flaskr.models.db import db, fernet
 from flaskr.models.address_data import AddressData
 
 
@@ -100,8 +100,25 @@ def calculate_statistics(data: list) -> dict:
     return statistics
 
 
+def dict_to_object_list(data_dict: list) -> list:
+    """Convert list of dictionaries into list of objects."""
+    data = []
+
+    for dict_item in data_dict:
+        print(dict_item)
+        address_data = AddressData(
+            address=dict_item["address"],
+            nested_addresses=dict_item["nested_addresses"],
+            words=dict_item["words"],
+            encrypted=True,
+        )
+        data.append(address_data)
+
+    return data
+
+
 def object_list_to_dict(objects_list: list) -> list:
-    """Convert list of objects into list dictionaries."""
+    """Convert list of objects into list of dictionaries."""
     data_dict = []
     for object in objects_list:
         data_dict.append(object.__dict__)
@@ -199,14 +216,39 @@ def scrape_url() -> str:
                 print(f"An error ocured: {ex}")
             nest_iter = nest_iter + 1
 
-        colection = db[f"{AddressData.colection_name}"]
-        data_dict = object_list_to_dict(data)
+        collection = db[f"{AddressData.colection_name}"]
+
         screaped_urls = get_scraped_urls(data)
-        colection.insert_many(data_dict)
         statistics = calculate_statistics(data)
+
+        for object in data:
+            object.encrypt()
+        data_dict = object_list_to_dict(data)
+        collection.insert_many(data_dict)
 
         return render_template(
             "result.html",
             title="Scraping result",
             statistics=statistics,
         )
+
+
+@address_data_blueprint.route("/general-statistics")
+def general_statistics() -> str:
+    """Endpoint to create sttistics from all scared data."""
+    data = []
+
+    collection = db[f"{AddressData.colection_name}"]
+    data_dict = list(collection.find({}))
+
+    data = dict_to_object_list(data_dict)
+    for object in data:
+        object.decrypt()
+
+    statistics = calculate_statistics(data)
+
+    return render_template(
+        "result.html",
+        title="Scraping result",
+        statistics=statistics,
+    )
