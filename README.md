@@ -123,7 +123,7 @@ pytest tests
 Pytlint
 
 ```sh
-python -m pylint flaskr/** tests/**
+python -m pylint ./flaskr ./tests
 ```
 
 Black check
