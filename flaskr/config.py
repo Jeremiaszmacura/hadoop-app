@@ -7,20 +7,20 @@ basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, "../.env"))
 
 
-class Config: # pylint: disable=too-few-public-methods
+class Config:  # pylint: disable=too-few-public-methods
     """Base config."""
 
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-class ProductionConfig(Config): # pylint: disable=too-few-public-methods
+class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
     """Uses production PostgreSQL database container."""
 
     ENV = "production"
 
 
-class DevelopmentConfig(Config): # pylint: disable=too-few-public-methods
+class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Uses PostgreSQL in docker container."""
 
     # SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI")
@@ -31,7 +31,7 @@ class DevelopmentConfig(Config): # pylint: disable=too-few-public-methods
     TEMPLATES_AUTO_RELOAD = True
 
 
-class TestingConfig(Config): # pylint: disable=too-few-public-methods
+class TestingConfig(Config):  # pylint: disable=too-few-public-methods
     """Uses sqlite in memory."""
 
     ENV = "development"

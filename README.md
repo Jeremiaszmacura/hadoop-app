@@ -88,13 +88,13 @@ $env:FLASK_APP = "flaskr/run.py"
 $env:FLASK_DEBUG="True"
 ```
 
-Install app as library in development mode using setuptool
+Install app as package in development mode using setuptools
 
 ```sh
 python -m pip install -e .[dev]
 ```
 
-Build package (run command each time after changes anmd before building image from Dockerfile)
+Build any C extensions in the project and then package those and the pure Python code into a .whl file in the dist directory (run command each time after changes anmd before building image from Dockerfile)
 
 ```sh
 python setup.py bdist_wheel

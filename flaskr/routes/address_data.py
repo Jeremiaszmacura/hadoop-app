@@ -1,18 +1,20 @@
 """Routes related to AddressData database colection."""
-import requests
-from flask import Blueprint, request, render_template
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import urllib.request, urllib.error
-from bs4 import BeautifulSoup
 import re
 import os
+import urllib.request
+import urllib.error
+
+import matplotlib
+import matplotlib.pyplot as plt
+import requests
+from flask import Blueprint, request, render_template
+from bs4 import BeautifulSoup
 
 from flaskr.models.db import db, db_backup
 from flaskr.models.address_data import AddressData
 
+
+matplotlib.use("Agg")
 
 address_data_blueprint = Blueprint("address_data_blueprint", __name__)
 
@@ -44,11 +46,6 @@ def most_common_words(words_occurrences: dict) -> list:
     return sorted(words_occurrences, key=words_occurrences.get, reverse=True)[:10]
 
 
-def covert_to_words_len_list(words_list: list) -> list:
-    """Takes list of words and return list of len of each word."""
-    return list(map(len, words_list))
-
-
 def words_length_median(words_list: list):
     """Calculates the median for word lengths."""
     sorted_words = sorted(words_list, key=len)
@@ -56,8 +53,7 @@ def words_length_median(words_list: list):
     index = (list_length - 1) // 2
     if list_length % 2:
         return len(sorted_words[index])
-    else:
-        return (len(sorted_words[index]) + len(sorted_words[index + 1])) / 2.0
+    return (len(sorted_words[index]) + len(sorted_words[index + 1])) / 2.0
 
 
 def count_words_length_mean(words_list: list):
@@ -68,14 +64,14 @@ def count_words_length_mean(words_list: list):
 def concatenate_words_lists(data: list) -> list:
     """Joins words lists from multpiple AddressData objects into one."""
     words_list = []
-    for object in data:
-        words_list.extend(object.words)
+    for adress_data in data:
+        words_list.extend(adress_data.words)
     return words_list
 
 
 def count_words_occurrences(words_list: list) -> dict:
     """Count occurrences of each word in scraped data."""
-    words_occurrences = dict()
+    words_occurrences = {}
 
     for word in words_list:
         if word in words_occurrences:
@@ -88,12 +84,12 @@ def count_words_occurrences(words_list: list) -> dict:
 
 def calculate_statistics(data: list) -> dict:
     """Calculate statistics and return as a dictionary."""
-    statistics = dict()
+    statistics = {}
     words_list = concatenate_words_lists(data)
-    words_len_list = covert_to_words_len_list(words_list)
     statistics["words length mean"] = count_words_length_mean(words_list)
     statistics["words median"] = words_length_median(words_list)
     words_occurrences = count_words_occurrences(words_list)
+    statistics["screaped_urls"] = get_scraped_urls(data)
     statistics["most common words"] = most_common_words(words_occurrences)
     statistics["histogram"] = create_words_len_hist(words_list)
     statistics["words occurrences"] = words_occurrences
@@ -119,16 +115,16 @@ def dict_to_object_list(data_dict: list) -> list:
 def object_list_to_dict(objects_list: list) -> list:
     """Convert list of objects into list of dictionaries."""
     data_dict = []
-    for object in objects_list:
-        data_dict.append(object.__dict__)
+    for adress_data in objects_list:
+        data_dict.append(adress_data.__dict__)
     return data_dict
 
 
 def get_scraped_urls(objects_list: list) -> list:
     """Get list of scraped urls."""
     scraped_ruls = []
-    for object in objects_list:
-        scraped_ruls.append(object.address)
+    for adress_data in objects_list:
+        scraped_ruls.append(adress_data.address)
     return scraped_ruls
 
 
@@ -147,7 +143,7 @@ def scrape_words(soup: BeautifulSoup) -> str:
 
 def scrape_data(url: str, wiki: bool) -> AddressData:
     """Runs scraping on given url and nested urls."""
-    source_code = requests.get(url).text
+    source_code = requests.get(url, timeout=10).text
     soup = BeautifulSoup(source_code, "html.parser")
     wordlist = scrape_words(soup)
     address_data = AddressData(url, words=wordlist)
@@ -167,7 +163,7 @@ def home() -> str:
     return render_template(
         "home.html",
         title="Scraping Words Tool",
-        description="Pass URL and numer of addresses to scrape - nesting from the passed url address",
+        description="Pass URL and numer of addresses to scrape - nesting from the passed address",
     )
 
 
@@ -184,7 +180,7 @@ def test_db() -> str:
 @address_data_blueprint.route("/about")
 def about() -> str:
     """Endpoint for about page."""
-    with open("flaskr/static/about.txt", "r") as file:
+    with open("flaskr/static/about.txt", "r", encoding="utf-8") as file:
         description = file.read()
     return render_template(
         "about.html",
@@ -193,45 +189,43 @@ def about() -> str:
     )
 
 
-@address_data_blueprint.route("/scrape-url", methods=["GET", "POST"])
+@address_data_blueprint.route("/scrape-url")
 def scrape_url() -> str:
     """Endpoint for scraping words from given url and nested urls."""
-    if request.method == "POST":
-        urls = [request.form["urlAddress"]]
-        nesting_lvl = int(request.form["nestedNumber"])
-        wiki = True if request.form.get("wiki") else False
-        nest_iter = 0
-        data = []
+    urls = [request.form["urlAddress"]]
+    nesting_lvl = int(request.form["nestedNumber"])
+    wiki = bool(request.form.get("wiki"))
+    nest_iter = 0
+    data = []
 
-        while nest_iter < nesting_lvl and len(urls) > nest_iter:
-            try:
-                data.append(scrape_data(urls[nest_iter], wiki))
-                if len(urls) <= nesting_lvl:
-                    urls.extend(data[-1].nested_addresses)
-                    urls = list(set(urls))
-            except UnicodeEncodeError as ex:
-                print(f"An error ocured: {ex}")
-            except urllib.error.HTTPError as ex:
-                print(f"An error ocured: {ex}")
-            nest_iter = nest_iter + 1
+    while nest_iter < nesting_lvl and len(urls) > nest_iter:
+        try:
+            data.append(scrape_data(urls[nest_iter], wiki))
+            if len(urls) <= nesting_lvl:
+                urls.extend(data[-1].nested_addresses)
+                urls = list(set(urls))
+        except UnicodeEncodeError as ex:
+            print(f"An error ocured: {ex}")
+        except urllib.error.HTTPError as ex:
+            print(f"An error ocured: {ex}")
+        nest_iter = nest_iter + 1
 
-        collection = db[f"{AddressData.colection_name}"]
-        collection_backup = db_backup[f"{AddressData.colection_name}"]
+    collection = db[f"{AddressData.colection_name}"]
+    collection_backup = db_backup[f"{AddressData.colection_name}"]
 
-        screaped_urls = get_scraped_urls(data)
-        statistics = calculate_statistics(data)
+    statistics = calculate_statistics(data)
 
-        for object in data:
-            object.encrypt()
-        data_dict = object_list_to_dict(data)
-        collection.insert_many(data_dict)
-        collection_backup.insert_many(data_dict)
+    for adress_data in data:
+        adress_data.encrypt()
+    data_dict = object_list_to_dict(data)
+    collection.insert_many(data_dict)
+    collection_backup.insert_many(data_dict)
 
-        return render_template(
-            "result.html",
-            title="Scraping result",
-            statistics=statistics,
-        )
+    return render_template(
+        "result.html",
+        title="Scraping result",
+        statistics=statistics,
+    )
 
 
 @address_data_blueprint.route("/general-statistics")
@@ -243,8 +237,8 @@ def general_statistics() -> str:
     data_dict = list(collection.find({}))
 
     data = dict_to_object_list(data_dict)
-    for object in data:
-        object.decrypt()
+    for adress_data in data:
+        adress_data.decrypt()
 
     statistics = calculate_statistics(data)
 

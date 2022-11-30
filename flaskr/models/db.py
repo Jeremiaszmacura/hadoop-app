@@ -1,7 +1,8 @@
 """Database instance file."""
+from os import environ
+
 from pymongo import MongoClient
 from cryptography.fernet import Fernet
-from os import environ
 
 
 client = MongoClient(environ.get("DEV_DATABASE_URI", "localhost:27017"))

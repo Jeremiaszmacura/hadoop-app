@@ -10,8 +10,8 @@ class AddressData:
     def __init__(
         self,
         address: str,
-        nested_addresses: list = [],
-        words: list = [],
+        nested_addresses: list = None,
+        words: list = None,
         encrypted: bool = False,
     ):
         self.address = address
