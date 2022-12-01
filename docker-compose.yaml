@@ -25,6 +25,8 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: admin
       ME_CONFIG_MONGODB_URL: "mongodb://user:user@mongodb"
+      ME_CONFIG_OPTIONS_EDITORTHEME: "dracula"
+    command: /bin/sh -c "sleep 15 && tini -- /docker-entrypoint.sh"
     networks:
       - flask-hadoop-app-network
 

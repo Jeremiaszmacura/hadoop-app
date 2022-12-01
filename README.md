@@ -165,3 +165,19 @@ Mongo-express
 ```text
 http://localhost:8081/
 ```
+
+<hr />
+
+### Change file permissions on Windows
+
+Open git bash in directory with selected file and check permissions of files
+
+```sh
+git ls-files --stage
+```
+
+Add permisstion to execute specified file
+
+```sh
+git update-index --chmod=+x 'name-of-shell-script'
+```
