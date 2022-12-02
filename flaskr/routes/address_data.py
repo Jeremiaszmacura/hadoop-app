@@ -189,7 +189,7 @@ def about() -> str:
     )
 
 
-@address_data_blueprint.route("/scrape-url", methods=['POST'])
+@address_data_blueprint.route("/scrape-url", methods=["POST"])
 def scrape_url() -> str:
     """Endpoint for scraping words from given url and nested urls."""
     urls = [request.form["urlAddress"]]
