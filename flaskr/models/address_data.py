@@ -15,8 +15,8 @@ class AddressData:
         encrypted: bool = False,
     ):
         self.address = address
-        self.nested_addresses = nested_addresses
-        self.words = words
+        self.nested_addresses = nested_addresses or []
+        self.words = words or []
         self.encrypted = encrypted
 
     def encrypt(self):
