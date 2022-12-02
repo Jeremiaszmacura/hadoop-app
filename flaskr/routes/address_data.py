@@ -219,7 +219,7 @@ def scrape_url() -> str:
         adress_data.encrypt()
     data_dict = object_list_to_dict(data)
     collection.insert_many(data_dict)
-    # collection_backup.insert_many(data_dict)
+    collection_backup.insert_many(data_dict)
 
     return render_template(
         "result.html",
