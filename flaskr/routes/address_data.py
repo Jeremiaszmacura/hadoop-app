@@ -224,7 +224,10 @@ def scrape_url() -> str:
     collection.insert_many(data_dict)
 
     if os.environ.get("SET_BACKUP_DATABASE"):
-        from flaskr.models.db import db_backup  # pylint: disable=import-outside-toplevel
+        from flaskr.models.db import (
+            db_backup,
+        )  # pylint: disable=import-outside-toplevel
+
         collection_backup = db_backup[f"{AddressData.collection_name}"]
         collection_backup.insert_many(data_dict)
 
