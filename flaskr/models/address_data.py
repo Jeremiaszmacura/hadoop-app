@@ -5,7 +5,7 @@ from flaskr.models.db import fernet
 class AddressData:
     """Class of AddressData database model"""
 
-    colection_name = "address_data"
+    collection_name: str = "address_data"
 
     def __init__(
         self,
@@ -21,30 +21,30 @@ class AddressData:
 
     def encrypt(self):
         """Encrypt object."""
-        encrypted_nested_addresses = []
-        encrypted_words = []
+        encrypted_nested_addresses: list = []
+        encrypted_words: list = []
 
-        self.address = fernet.encrypt(self.address.encode())
+        self.address: list = fernet.encrypt(self.address.encode())
         for adress in self.nested_addresses:
             encrypted_nested_addresses.append(fernet.encrypt(adress.encode()))
         for words in self.words:
             encrypted_words.append(fernet.encrypt(words.encode()))
 
-        self.nested_addresses = encrypted_nested_addresses
-        self.words = encrypted_words
-        self.encrypted = True
+        self.nested_addresses: list = encrypted_nested_addresses
+        self.words: list = encrypted_words
+        self.encrypted: bool = True
 
     def decrypt(self):
         """Decrypt object."""
-        decrypted_nested_addresses = []
-        decrypted_words = []
+        decrypted_nested_addresses: list = []
+        decrypted_words: list = []
 
-        self.address = fernet.decrypt(self.address).decode()
+        self.address: list = fernet.decrypt(self.address).decode()
         for adress in self.nested_addresses:
             decrypted_nested_addresses.append(fernet.decrypt(adress).decode())
         for words in self.words:
             decrypted_words.append(fernet.decrypt(words).decode())
 
-        self.nested_addresses = decrypted_nested_addresses
-        self.words = decrypted_words
-        self.encrypted = False
+        self.nested_addresses: list = decrypted_nested_addresses
+        self.words: list = decrypted_words
+        self.encrypted: bool = False
